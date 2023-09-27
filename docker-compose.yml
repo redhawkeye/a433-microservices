@@ -1,0 +1,77 @@
+# syntax untuk menggunakan spesifik versi dari docker-compose
+version: '3.8'
+services:
+  # syntex untuk set nama service item-app
+  item-app:
+    # syntax untuk menggunakan spesifik container image item-app dari github container registry
+    image: 'ghcr.io/redhawkeye/item-app:v1'
+
+    # syntax untuk set hostname container item-app
+    hostname: item-app.dicoding.lab
+
+    # syntax untuk set nama container item-app
+    container_name: item-app
+
+    # syntax untuk set restart policy jika container berhenti menjadi selalu restart
+    restart: always
+
+    # syntax untuk set envitonment pada container
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - DB_HOST=${DB_HOST:-item-db}
+
+    # syntax untuk set folder kerja
+    working_dir: /app
+
+    # syntax untuk menjalankan perintah di dalam container saat startup
+    entrypoint: [ "npm", "start" ]
+
+    # syntax untuk expose port container ke mesin host
+    ports:
+      - 0.0.0.0:80:8080
+
+    # syntax untuk memastikan bahwa container item-app berjalan setelah container item-db sudah diluncurkan
+    depends_on:
+      item-db:
+        condition: service_healthy
+
+    # syntax untuk set nama jaringan yang akan di pakai
+    networks:
+      proyek-pertama:
+
+  # syntex untuk set nama service item-db
+  item-db:
+    # syntax untuk menggunakan spesifik container image item-db dari docker hub
+    image: 'mongo:3'
+
+    # syntax untuk set hostname container item-db
+    hostname: item-db.dicoding.lab
+
+    # syntax untuk set nama container item-db
+    container_name: item-db
+
+    # syntax untuk set restart policy jika container berhenti menjadi selalu restart
+    restart: always
+
+    # syntax untuk cek kesehatan service yang sedang berjalan
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.stats()"]
+
+    # syntax untuk mount volume yang sudah di buat di docker-compose
+    volumes:
+      - app-db:/data/db
+      - app-configdb:/data/configdb
+
+    # syntax untuk set nama jaringan yang akan di pakai
+    networks:
+      proyek-pertama:
+
+# syntax untuk membuat jaringan di dalam container
+networks:
+  proyek-pertama:
+    driver: bridge
+
+# syntax untuk membuat volume di dalam container
+volumes:
+  app-db: {}
+  app-configdb: {}
