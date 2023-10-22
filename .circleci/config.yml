@@ -13,13 +13,18 @@ jobs:
       - setup_remote_docker
       - run:
           name: Run hadolint
-          command: docker run --rm --interactive hadolint/hadolint < Dockerfile
+          command: |
+            apk update
+            apk add gcc
+            docker run --rm --interactive hadolint/hadolint < Dockerfile
+
   test-app:
     docker:
       - image: golang:1.15-alpine
     steps:
       - checkout
       - run: go test -v -short --count=1 $(go list ./...)
+
   build-app-karsajobs:
     executor: docker
     steps:
