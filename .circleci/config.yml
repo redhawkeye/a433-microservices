@@ -24,7 +24,7 @@ jobs:
           name: Test app
           command: |
             apk update
-            apk add gcc
+            apk add gcc musl-dev
             go test -v -short --count=1 $(go list ./...)
 
   build-app-karsajobs:
