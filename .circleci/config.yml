@@ -12,18 +12,20 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Run hadolint
-          command: |
-            apk update
-            apk add gcc
-            docker run --rm --interactive hadolint/hadolint < Dockerfile
+          name: Lint Dockerfile
+          command: docker run --rm --interactive hadolint/hadolint < Dockerfile
 
   test-app:
     docker:
       - image: golang:1.15-alpine
     steps:
       - checkout
-      - run: go test -v -short --count=1 $(go list ./...)
+      - run:
+          name: Test app
+          command: |
+            apk update
+            apk add gcc
+            go test -v -short --count=1 $(go list ./...)
 
   build-app-karsajobs:
     executor: docker
@@ -31,7 +33,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Build and Push karsajobs
+          name: Build and Push karsajobs app
           command: sh build_push_image_karsajobs.sh
 
 workflows:
