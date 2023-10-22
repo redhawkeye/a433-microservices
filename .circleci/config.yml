@@ -1,12 +1,14 @@
-version: 2.1
+version: 2
 
 jobs:
   lint-dockerfile:
-    docker:
-      - image: hadolint/hadolint:2.12.0
+    executor: docker
     steps:
       - checkout
-      - run: hadolint < Dockerfile
+      - setup_remote_docker
+      - run:
+          name: Run hadolint
+          command: docker run --rm --interactive hadolint/hadolint < Dockerfile
   test-app:
     docker:
       - image: golang:1.15-alpine
@@ -14,14 +16,16 @@ jobs:
       - checkout
       - run: go test -v -short --count=1 $(go list ./...)
   build-app-karsajobs:
-    docker:
-      - image: docker:dind
+    executor: docker
     steps:
       - checkout
-      - run: sh build_push_image_karsajobs.sh
+      - setup_remote_docker
+      - run:
+          name: Build and Push karsajobs
+          command: sh build_push_image_karsajobs.sh
 
 workflows:
-  build_and_test:
+  karsajobs:
     jobs:
       - lint-dockerfile
       - test-app
