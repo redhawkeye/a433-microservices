@@ -35,5 +35,6 @@ workflows:
     jobs:
       - lint-dockerfile
       - test-app
-      - build-app-karsajobs
+      - build-app-karsajobs:
+          context: Github
 
