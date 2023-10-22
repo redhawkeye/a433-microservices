@@ -1,5 +1,10 @@
 version: 2.1
 
+executors:
+  docker:
+    docker:
+      - image: docker:stable
+
 jobs:
   lint-dockerfile:
     executor: docker
@@ -25,6 +30,7 @@ jobs:
           command: sh build_push_image_karsajobs.sh
 
 workflows:
+  version: 2
   karsajobs:
     jobs:
       - lint-dockerfile
