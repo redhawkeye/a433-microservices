@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/nothinux/karsajobs/pkg/models/mongodb"
+	"github.com/dicodingacademy/karsajobs/pkg/models/mongodb"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

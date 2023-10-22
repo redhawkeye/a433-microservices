@@ -18,7 +18,7 @@ jobs:
       - image: docker:dind
     steps:
       - checkout
-      - run: bash build_push_image_karsajobs.sh
+      - run: sh build_push_image_karsajobs.sh
 
 workflows:
   build_and_test:
