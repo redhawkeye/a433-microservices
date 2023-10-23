@@ -1,0 +1,36 @@
+version: 2.1
+
+executors:
+  docker:
+    docker:
+      - image: docker:stable
+
+jobs:
+  lint-dockerfile:
+    executor: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Lint Dockerfile
+          command: |
+            wget https://github.com/hadolint/hadolint/releases/download/v2.12.1-beta/hadolint-Linux-x86_64 -O /usr/local/bin/hadolint
+            chmod +x /usr/local/bin/hadolint
+            /usr/local/bin/hadolint Dockerfile
+
+  build-app-karsajobs-ui:
+    executor: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build and Push karsajobs app
+          command: sh build_push_image_karsajobs_ui.sh
+
+workflows:
+  version: 2
+  karsajobs-ui:
+    jobs:
+      - lint-dockerfile
+      - build-app-karsajobs-ui:
+          context: Github
