@@ -15,7 +15,7 @@ import (
 )
 
 func newTestDB(t *testing.T) (*mongo.Database, func()) {
-	client, err := mongo.NewClient(options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:%s@%s:27017/?authsource=admin", os.Getenv("MONGO_USER"), os.Getenv("MONGO_PASS"), os.Getenv("MONGO_HOST"))))
+	client, err := mongo.NewClient(options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:%s@%s:%s/?authsource=admin", os.Getenv("MONGO_USER"), os.Getenv("MONGO_PASS"), os.Getenv("MONGO_HOST"), os.Getenv("MONGO_PORT"))))
 	if err != nil {
 		log.Fatal(err)
 	}
