@@ -13,7 +13,10 @@ jobs:
       - setup_remote_docker
       - run:
           name: Lint Dockerfile
-          command: docker run --rm --interactive hadolint/hadolint < Dockerfile
+          command: |
+            wget https://github.com/hadolint/hadolint/releases/download/v2.12.1-beta/hadolint-Linux-x86_64 -O /usr/local/bin/hadolint
+            chmod +x /usr/local/bin/hadolint
+            /usr/local/bin/hadolint < Dockerfile
 
   test-app:
     docker:
@@ -44,4 +47,3 @@ workflows:
       - test-app
       - build-app-karsajobs:
           context: Github
-
