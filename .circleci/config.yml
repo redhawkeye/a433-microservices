@@ -16,7 +16,7 @@ jobs:
           command: |
             wget https://github.com/hadolint/hadolint/releases/download/v2.12.1-beta/hadolint-Linux-x86_64 -O /usr/local/bin/hadolint
             chmod +x /usr/local/bin/hadolint
-            /usr/local/bin/hadolint < Dockerfile
+            /usr/local/bin/hadolint Dockerfile
 
   test-app:
     docker:
