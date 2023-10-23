@@ -1,41 +1,45 @@
 version: 2.1
 
+# Mesin/image yang akan di pakai dalam pipeline lint-dockerfile dan build-app-karsajobs
 executors:
   docker:
     docker:
       - image: docker:stable
 
 jobs:
+  # Job untuk install dan menjalankan hadolint terhadap berkas Dockerfile
   lint-dockerfile:
-    executor: docker
+    executor: docker # syntax untuk memilih mesin/image yang akan di gunakan di dalam pipeline
     steps:
-      - checkout
-      - setup_remote_docker
-      - run:
+      - checkout # syntax untuk mengunduh source code yang ada di dalam repository ke dalam pipeline
+      - setup_remote_docker # syntax untuk meload docker workspace di dalam pipeline
+      - run: # Perintah untuk install dan menjalankan hadolint terhadap berkas Dockerfile
           name: Lint Dockerfile
           command: |
             wget https://github.com/hadolint/hadolint/releases/download/v2.12.1-beta/hadolint-Linux-x86_64 -O /usr/local/bin/hadolint
             chmod +x /usr/local/bin/hadolint
             /usr/local/bin/hadolint Dockerfile
 
+  # Job untuk menjalankan unit test backend
   test-app:
     docker:
-      - image: golang:1.15-alpine
+      - image: golang:1.15-alpine # syntax untuk memilih image container yang akan di gunakan di dalam pipeline
     steps:
-      - checkout
-      - run:
+      - checkout # syntax untuk mengunduh source code yang ada di dalam repository ke dalam pipeline
+      - run: # Perintah untuk menjalankan unit test backend
           name: Test app
           command: |
             apk update
             apk add gcc musl-dev
             go test -v -short --count=1 $(go list ./...)
 
+  # Job untuk build dan push image ke github registry
   build-app-karsajobs:
-    executor: docker
+    executor: docker # syntax untuk memilih mesin/image yang akan di gunakan di dalam pipeline
     steps:
-      - checkout
-      - setup_remote_docker
-      - run:
+      - checkout # syntax untuk mengunduh source code yang ada di dalam repository ke dalam pipeline
+      - setup_remote_docker # syntax untuk meload docker workspace di dalam pipeline
+      - run: # Perintah untuk menjalankan build dan push image ge github registry
           name: Build and Push karsajobs app
           command: sh build_push_image_karsajobs.sh
 
@@ -44,6 +48,12 @@ workflows:
   karsajobs:
     jobs:
       - lint-dockerfile
-      - test-app
+      - test-app:
+          name: test-app
+          requires: # syntax untuk memastikan job test-app berjalan setelah job lint-dockerfile selesai
+            - lint-dockerfile
       - build-app-karsajobs:
-          context: Github
+          name: build-app-karsajobs
+          requires: # syntax untuk memastikan job build-app-karsajobs berjalan setelah job test-app selesai
+            - test-app
+          context: Github # syntax untuk memanggil environment yang akan di gunakan di dalam pipeline build-app-karsajobs
