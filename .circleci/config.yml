@@ -1,30 +1,33 @@
 version: 2.1
 
+# Mesin/image yang akan di pakai dalam pipeline lint-dockerfile dan build-app-karsajobs-ui
 executors:
   docker:
     docker:
       - image: docker:stable
 
 jobs:
+  # Job untuk install dan menjalankan hadolint terhadap berkas Dockerfile
   lint-dockerfile:
-    executor: docker
+    executor: docker # syntax untuk memilih mesin/image yang akan di gunakan di dalam pipeline
     steps:
-      - checkout
-      - setup_remote_docker
-      - run:
+      - checkout # syntax untuk mengunduh source code yang ada di dalam repository ke dalam pipeline
+      - setup_remote_docker # syntax untuk meload docker workspace di dalam pipeline
+      - run: # Perintah untuk install dan menjalankan hadolint terhadap berkas Dockerfile
           name: Lint Dockerfile
           command: |
             wget https://github.com/hadolint/hadolint/releases/download/v2.12.1-beta/hadolint-Linux-x86_64 -O /usr/local/bin/hadolint
             chmod +x /usr/local/bin/hadolint
             /usr/local/bin/hadolint Dockerfile
 
+  # Job untuk build dan push image ke github registry
   build-app-karsajobs-ui:
-    executor: docker
+    executor: docker # syntax untuk memilih mesin/image yang akan di gunakan di dalam pipeline
     steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: Build and Push karsajobs app
+      - checkout # syntax untuk mengunduh source code yang ada di dalam repository ke dalam pipeline
+      - setup_remote_docker # syntax untuk meload docker workspace di dalam pipeline
+      - run: # Perintah untuk menjalankan build dan push image ge github registry
+          name: Build and Push karsajobs-ui app
           command: sh build_push_image_karsajobs_ui.sh
 
 workflows:
@@ -33,4 +36,7 @@ workflows:
     jobs:
       - lint-dockerfile
       - build-app-karsajobs-ui:
-          context: Github
+          name: build-app-karsajobs-ui
+          requires: # syntax untuk memastikan job build-app-karsajobs-ui berjalan setelah job lint-dockerfile selesai
+            - lint-dockerfile
+          context: Github # syntax untuk memanggil environment yang akan di gunakan di dalam pipeline build-app-karsajobs-ui
