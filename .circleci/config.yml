@@ -1,0 +1,38 @@
+version: 2.1
+
+executors:
+  docker:
+    docker:
+      - image: docker:stable
+
+jobs:
+  lint-dockerfile:
+    executor: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Lint Dockerfile
+          command: docker run --rm --interactive hadolint/hadolint:latest < Dockerfile
+
+  build-image:
+    executor: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build and Push image
+          command: |
+            docker build -t ghcr.io/redhawkeye/shipping-service:latest .
+            echo $CREDS | docker login ghcr.io -u redhawkeye --password-stdin
+            docker push ghcr.io/redhawkeye/shipping-service:latest
+
+workflows:
+  version: 2
+  shipping-service:
+    jobs:
+      - lint-dockerfile
+      - build-image:
+          name: build-image
+          requires:
+            - lint-dockerfile
